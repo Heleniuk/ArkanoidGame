@@ -17,6 +17,7 @@ function play() {
     board.addEventListener("mousemove", function(event) {
         platform.move(event);
     });
+
 }
 
 function initParameters() {
@@ -45,10 +46,13 @@ function initParameters() {
 }
 
 function initBoard() {
+
     board = document.getElementById("board");
     context = board.getContext('2d');
     board.width  = CELL_SIZE * BOARD_SIZE;
     board.height = CELL_SIZE * BOARD_SIZE;
+
+    //draw the board
     context.fillStyle = COLORS.BACKGROUND;
     context.fillRect(0, 0, board.width, board.height);
 
@@ -67,28 +71,40 @@ function initBoard() {
         }
         return true;
     }
+
 }
 
 function Platform() {
+
     this.width = 3 * CELL_SIZE;
     this.height = 0.7 * CELL_SIZE;
     this.imageSrc = IMAGES.PLATFORM;
     this.x = board.width / 2 - this.width;
     this.y = board.height - this.height;
+
     this.draw = function () {
+
+        //draw the rectangular platform
         context.fillStyle = COLORS.PLATFORM;
         context.fillRect(this.x, this.y, this.width, this.height);
-        //adding gloss
+
+        //add gloss
         var image = new Image();
         image.src = this.imageSrc;
         image.onload =
             context.drawImage(image, this.x, this.y, this.width, this.height);
+
     };
+
     this.hide = function () {
+
         context.fillStyle = COLORS.BACKGROUND;
         context.fillRect(this.x, this.y, this.width, this.height);
+
     };
+
     this.move = function(e) {
+
         var x = e.clientX;
         if (this.width / 2 < x && x < board.width - this.width / 2) {
             this.hide();
@@ -96,6 +112,7 @@ function Platform() {
             this.draw();
         }
     }
+
 }
 
 function Ball() {
@@ -103,20 +120,27 @@ function Ball() {
     this.size = CELL_SIZE;
     this.x = board.width / 2 - this.size / 2;
     this.y = board.height - platform.height - this.size;
+
     this.draw =  function () {
+
+        //draw the ball
         context.beginPath();
         var radius = this.size / 2;
         context.arc(this.x + radius, this.y + radius, radius, 0, 2 * Math.PI, false);
         context.fillStyle = COLORS.BALL;
         context.fill();
         context.stroke();
-        //adding gloss
+
+        //add gloss from the image
         var image = new Image();
         image.src = IMAGES.BALL;
         image.onload =
             context.drawImage(image, this.x, this.y, this.size, this.size);
+
     };
+
     this.hide = function () {
+
         context.beginPath();
         var radius = this.size / 2;
         context.arc(this.x + radius, this.y + radius, radius, 0, 2 * Math.PI, false);
@@ -124,6 +148,7 @@ function Ball() {
         context.strokeStyle = COLORS.BACKGROUND;
         context.fill();
         context.stroke();
+
     };
 }
 
@@ -136,28 +161,36 @@ function Cell(x, y, isBlocked) {
     this.isBlocked = isBlocked;
 
     this.draw = function () {
+
         var image = new Image();
         image.src = IMAGES.CELL;
         image.onload =
             context.drawImage(image, this.x, this.y, this.width, this.height);
+
     };
+
     this.hide = function() {
+
         context.fillStyle = COLORS.BACKGROUND;
         context.fillRect(this.x, this.y, CELL_SIZE, CELL_SIZE);
+
     };
+
 }
 
 function fillBoardWithCells(matrix) {
 
-    //drawing a block if the cell is blocked according to the matrix
+    //draw a cell if the matrix element is blocked (contains 1 instead of 0)
     for(var i = 0; i < matrix.length; i++) {
         for(var j = 0; j < matrix[i].length; j++) {
+
             if(matrix[i][j] == 1) {
                 matrix[i][j] = new Cell(i * CELL_SIZE, j * CELL_SIZE, 1);
                 matrix[i][j].draw();
             } else {
                 matrix[i][j] = new Cell(i * CELL_SIZE, j * CELL_SIZE, 0);
             }
+
         }
     }
 }
@@ -204,11 +237,13 @@ function launchBall() {
     ball.y += STEP_Y;
     ball.x += STEP_X;
     ball.draw();
+
 }
 
-//additional functions
+//supplementary functions
 
 function initRandomMatrix(size) {
+
     var matrix = [];
     for(var i = 0; i < size; i++) {
         matrix[i] = [];
@@ -222,6 +257,7 @@ function initRandomMatrix(size) {
         }
     }
     return matrix;
+
 }
 
 function isHitAnyFromMatrix(movingObject, matrixToBeHit) {
@@ -239,6 +275,7 @@ function isHitAnyFromMatrix(movingObject, matrixToBeHit) {
         }
     }
     return false;
+
 }
 
 function isHit(movingObject, objectToBeHit) {
@@ -264,5 +301,6 @@ function isHit(movingObject, objectToBeHit) {
         return false
     }
     return true;
+
 }
 
